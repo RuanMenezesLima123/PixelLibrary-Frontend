@@ -1,35 +1,42 @@
 // ========= PESQUISA E FILTROS =========
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.querySelector('#form-busca');
-  if (!form) return;
+  const campoBusca = document.querySelector('#campo-busca');
+  const categorias = document.querySelectorAll('.categoria-filtro');
 
   // Manipula cliques em categorias
-  document.querySelectorAll('.categoria-filtro').forEach(categoria => {
-    categoria.addEventListener('click', () => {
-      const filtro = categoria.textContent.trim();
-      localStorage.setItem('ultimaBusca', filtro);
-      localStorage.setItem('tipoBusca', 'categoria'); // Adiciona tipo de busca
+  if (categorias) {
+    categorias.forEach(categoria => {
+      categoria.addEventListener('click', () => {
+        const filtro = categoria.textContent.trim();
+        localStorage.setItem('ultimaBusca', filtro);
+        localStorage.setItem('tipoBusca', 'categoria');
+        window.location.href = 'jogos.html';
+      });
+    });
+  }
+
+  // Manipula busca por texto
+  if (form && campoBusca) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const query = campoBusca.value.trim();
+      if (!query) return;
+
+      localStorage.setItem('ultimaBusca', query);
+      localStorage.setItem('tipoBusca', 'texto');
       window.location.href = 'jogos.html';
     });
-  });
+  }
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const query = document.querySelector('#campo-busca').value.trim();
-    if (!query) return;
-
-    try {
-      localStorage.setItem('ultimaBusca', query);
-      localStorage.setItem('tipoBusca', 'texto'); // Adiciona tipo de busca
-      window.location.href = 'jogos.html';
-    } catch (err) {
-      console.error('Erro ao buscar jogo:', err);
-    }
-  });
+  // Carrega as seções
+  carregarRecomendacoes();
+  carregarNovidades();
+  carregarProblemasConsole();
 });
 
 // ========= RECOMENDAÇÕES =========
-document.addEventListener('DOMContentLoaded', async () => {
+async function carregarRecomendacoes() {
   const container = document.querySelector('.recomendacoes');
   if (!container) return;
 
@@ -37,11 +44,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const res = await fetch('https://pixellibrary-backend-production.up.railway.app/api/jogos/recomendacoes');
     const data = await res.json();
 
-    container.innerHTML = '';
-
-    data.forEach(jogo => {
-      const img = jogo.cover?.url?.replace('t_thumb', 't_cover_big');
-      const card = `
+    container.innerHTML = data.map(jogo => {
+      const img = jogo.cover?.url?.replace('t_thumb', 't_cover_big') || 'placeholder.jpg';
+      return `
         <article class="card-jogo">
           <img src="${img}" alt="${jogo.name}" title="${jogo.name}">
           <div class="jogo-info">
@@ -50,78 +55,56 @@ document.addEventListener('DOMContentLoaded', async () => {
           </div>
         </article>
       `;
-      container.innerHTML += card;
-    });
+    }).join('');
   } catch (err) {
     console.error('Erro ao buscar recomendações:', err);
-    container.innerHTML = '<p>Problemas ao carregar recomendações. Tente novamente mais tarde.</p>';
+    container.innerHTML = '<p class="erro">Problemas ao carregar recomendações. Tente novamente mais tarde.</p>';
   }
-});
+}
 
 // ========= NOVIDADES =========
 async function carregarNovidades() {
+  const container = document.querySelector('#novidades .grid-jogos');
+  if (!container) return;
+
   try {
     const res = await fetch('https://pixellibrary-backend-production.up.railway.app/api/novidades');
     const jogos = await res.json();
 
-    const container = document.querySelector('#novidades .grid-jogos');
-    if (!container) return;
-    
-    container.innerHTML = '';
-
-    jogos.forEach(jogo => {
-      const img = jogo.cover?.url.replace('t_thumb', 't_cover_big');
-      const nome = jogo.name;
+    container.innerHTML = jogos.map(jogo => {
+      const img = jogo.cover?.url?.replace('t_thumb', 't_cover_big') || 'placeholder.jpg';
       const dataLancamento = jogo.first_release_date ? 
         new Date(jogo.first_release_date * 1000).toLocaleDateString() : 'Em breve';
 
-      const card = `
+      return `
         <article class="card-jogo">
-          <img src="${img}" alt="${nome}" title="${nome}">
+          <img src="${img}" alt="${jogo.name}" title="${jogo.name}">
           <div class="jogo-info">
-            <h3>${nome}</h3>
-            <span class="data-lancamento">${dataLancamento}</span>
+            <h3>${jogo.name}</h3>
+            <span class="data-lancamento">Lançamento: ${dataLancamento}</span>
           </div>
         </article>
       `;
-      container.innerHTML += card;
-    });
+    }).join('');
   } catch (err) {
     console.error('Erro ao buscar novidades:', err);
-    const container = document.querySelector('#novidades .grid-jogos');
-    if (container) {
-      container.innerHTML = '<p>Problemas ao carregar novidades. Tente novamente mais tarde.</p>';
-    }
+    container.innerHTML = '<p class="erro">Problemas ao carregar novidades. Tente novamente mais tarde.</p>';
   }
 }
 
-// ========= CLIQUE NOS JOGOS ========= (unificado)
-document.addEventListener('click', (e) => {
-  const img = e.target.closest('.card-jogo img');
-  if (!img) return;
-
-  const nomeJogo = img.getAttribute('title');
-  if (!nomeJogo) return;
-
-  localStorage.setItem('ultimaBusca', nomeJogo);
-  localStorage.setItem('tipoBusca', 'jogo');
-  window.location.href = 'jogos.html';
-});
-
 // ========= CONSOLE PROBLEMS =========
-document.addEventListener('DOMContentLoaded', async () => {
-  const consoleProblemsSection = document.querySelector('#console-problems');
-  if (!consoleProblemsSection) return;
+async function carregarProblemasConsole() {
+  const container = document.querySelector('#console-problems .grid-jogos');
+  if (!container) return;
 
   try {
-    const response = await fetch('https://pixellibrary-backend-production.up.railway.app/api/jogos/recomendacoes');
-    const data = await response.json();
+    const res = await fetch('https://pixellibrary-backend-production.up.railway.app/api/jogos/recomendacoes');
+    const data = await res.json();
     
-    // Filtra jogos com problemas conhecidos (exemplo)
     const problematicGames = data.filter(jogo => jogo.rating < 70).slice(0, 4);
     
-    consoleProblemsSection.querySelector('.grid-jogos').innerHTML = problematicGames.map(jogo => {
-      const img = jogo.cover?.url?.replace('t_thumb', 't_cover_big');
+    container.innerHTML = problematicGames.map(jogo => {
+      const img = jogo.cover?.url?.replace('t_thumb', 't_cover_big') || 'placeholder.jpg';
       return `
         <article class="card-jogo">
           <img src="${img}" alt="${jogo.name}" title="${jogo.name}">
@@ -134,11 +117,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     }).join('');
   } catch (err) {
     console.error('Erro ao carregar jogos problemáticos:', err);
-    consoleProblemsSection.innerHTML = '<p>Não foi possível carregar informações de problemas no console.</p>';
+    container.innerHTML = '<p class="erro">Não foi possível carregar informações de problemas no console.</p>';
   }
-});
+}
 
-// Inicializa as funções
-document.addEventListener('DOMContentLoaded', () => {
-  carregarNovidades();
+// ========= CLIQUE NOS JOGOS (UNIFICADO) =========
+document.addEventListener('click', (e) => {
+  const img = e.target.closest('.card-jogo img');
+  if (!img) return;
+
+  const nomeJogo = img.getAttribute('title');
+  if (!nomeJogo) return;
+
+  localStorage.setItem('ultimaBusca', nomeJogo);
+  localStorage.setItem('tipoBusca', 'jogo');
+  window.location.href = 'jogos.html';
 });
