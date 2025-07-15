@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!container) return;
 
   try {
-    const res = await fetch('/api/jogos/recomendacoes');
+    const res = await fetch('https://pixellibrary-backend-production.up.railway.app/api/jogos/recomendacoes');
     const data = await res.json();
 
     container.innerHTML = '';
@@ -58,7 +58,7 @@ document.addEventListener('click', (e) => {
 
 async function carregarNovidades() {
   try {
-    const res = await fetch('/api/novidades');
+    const res = await fetch('https://pixellibrary-backend-production.up.railway.app/api/novidades');
     const jogos = await res.json();
 
     const container = document.querySelector('#novidades .grid-jogos');
