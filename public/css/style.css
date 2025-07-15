@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+:root {
+    --primary-color: #313158;
+    --secondary-color: #171729;
+    --tertiary-color: #0D0D1A;
+    --text-color: rgb(255, 255, 255);
+    --link-color: #95cdfc;
+    --link-hover-bg-color: rgb(173, 173, 173);
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 16px;
+    padding: 8px 12px;
+    transition: background 0.3s;
+}
+
+a:hover {
+    background-color: rgba(255, 255, 255, 0.027);
+    color: var(--link-color);
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+body {
+    background: linear-gradient(180deg, #313158, #171729, #0D0D1A);
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    font-family: "Poppins", sans-serif;
+    font-size: 16px;
+    color: var(--text-color);
+}
+
+/* HEADER */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background-color: transparent;
+}
+
+#container-logo {
+    height: 60px;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+#container-nav {
+    display: flex;
+    gap: 20px;
+}
+
+#container-nav ul {
+    display: flex;
+    list-style: none;
+}
+
+/* Link específico da página "Sobre" */
+#sobreNos {
+    text-decoration: none;
+    color: #CD1F81;
+}
+
+/* MAIN */
+main {
+    padding: 32px;
+    background-color: transparent;
+}
+
+/* FOOTER */
+footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: var(--text-color);
+    padding: 24px 32px;
+    background-color: #95cefc04;
+}
+
+#footer-content {
+    max-width: 800px;
+    width: 100%;
+}
+
+#footer-content a {
+    display: block;
+    text-decoration: none;
+    color: #CD1F81;
+    margin-bottom: 12px;
+}
+
+#footer-content a:hover {
+    width: auto;
+}
+
+#footer-content p {
+    font-size: 16px;
+    line-height: 1.4;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 600px) {
+    header {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+
+    #container-logo img {
+        height: 48px;
+    }
+
+    #container-nav {
+        display: none;
+    }
+
+    footer {
+        padding: 16px 20px;
+    }
+
+    #footer-content p {
+        font-size: 0.85rem;
+    }
+
+    #footer-content a {
+        color: #CD1F81;
+    }
+}
