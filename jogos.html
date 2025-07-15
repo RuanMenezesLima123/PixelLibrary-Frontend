@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="css/reset.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/jogo.css" />
+  <link rel="shortcut icon" href="assets/favicon.png" type="image/x-icon" />
+  <title>Pixel Library</title>
+</head>
+
+<body>
+  <header>
+    <img src="assets/Logotipo white.png" alt="Logotipo da Pixel Library" id="container-logo" />
+    <nav id="container-nav">
+      <ul>
+        <li><a href="inicial.html">Home</a></li>
+        <li><a href="biblioteca.html">Biblioteca</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="main-container">
+      <div class="grid-layout">
+
+        <!-- Coluna Esquerda: Imagem do Jogo -->
+        <div class="left-column">
+          <div class="game-cover-container card card-small-padding">
+            <img src="assets/gameLogo/jogo1.jpg" alt="Capa do jogo" class="game-cover-image" />
+          </div>
+        </div>
+
+        <!-- Coluna Direita: Detalhes do Jogo -->
+        <div class="right-column">
+          <div class="card game-details">
+            <h1 class="titulo">Título do Jogo</h1>
+            
+            <button id="btn-favoritar" class="btn-favoritar">❤️ Favoritar</button>
+
+            <div class="info-item">
+              <strong>Data de Lançamento / Empresa:</strong>
+              <p class="data-empresa">Carregando...</p>
+            </div>
+
+            <div class="info-item">
+              <strong>Gênero:</strong>
+              <p class="genero">Carregando...</p>
+            </div>
+
+            <div class="info-item">
+              <strong>Avaliação:</strong>
+              <p class="avaliacao">Carregando...</p>
+            </div>
+
+            <div class="info-item">
+              <strong>Descrição:</strong>
+              <p class="resumo">Carregando...</p>
+            </div>
+          </div>
+
+          <!-- Seção de Avaliações -->
+          <div class="card avaliacoes-section">
+            <div class="avaliacoes-header">
+              <h2>Avaliações dos Usuários</h2>
+            </div>
+
+            <div id="grafico-distribuicao" class="grafico-container"></div>
+            
+            <div id="avaliacoes-lista" class="avaliacoes-lista"></div>
+
+            <h3>Deixe sua avaliação</h3>
+            <textarea id="avaliacao-texto" placeholder="Escreva sua avaliação aqui..." rows="4"></textarea>
+            <div class="avaliacao-input-container">
+              <select id="avaliacao-nota">
+                <option value="1">★☆☆☆☆ - Péssimo</option>
+                <option value="2">★★☆☆☆ - Ruim</option>
+                <option value="3">★★★☆☆ - Regular</option>
+                <option value="4">★★★★☆ - Bom</option>
+                <option value="5">★★★★★ - Excelente</option>
+              </select>
+              <button id="btn-enviar-avaliacao" class="btn-enviar">Enviar Avaliação</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/jogos.js" defer></script>
+</body>
+
+</html>

@@ -1,0 +1,178 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+:root {
+    --primary-color: #313158;
+    --secondary-color: #171729;
+    --tertiary-color: #0D0D1A;
+    --text-color: rgb(255, 255, 255);
+    --link-color: #95cdfc;
+    --link-hover-bg-color: rgb(173, 173, 173);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html body {
+    height: 100%;
+}
+
+/* COMECO DO MAIN */
+
+main {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 100vh;
+
+    background-color: transparent;
+    padding: 32px;
+}
+
+/* Estilos para o contêiner do formulário de login */
+.login-container {
+    padding: 2rem;
+    /* Preenchimento interno */
+    border-radius: 0.5rem;
+    /* Bordas arredondadas */
+    /* Sombra */
+    width: 100%;
+    /* Ocupa a largura total disponível */
+    
+    max-width: 28rem;
+}
+
+/* Estilos para o título do formulário */
+.login-container h1 {
+    font-size: 30px;
+    font-weight: 700;
+    text-align: center;
+    color: #ffffff;
+    margin-bottom: 2rem;
+}
+
+/* Estilos para os grupos de campo (label + input) */
+.form-group {
+    margin-bottom: 1rem;
+    /* Margem inferior */
+}
+
+/* Estilos para os rótulos (labels) */
+.form-group label {
+    display: block;
+    color: #cbd5e0;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+/* Estilos para os campos de entrada (inputs) */
+.form-group input {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    /* Sombra sutil */
+    appearance: none;
+    /* Remove estilos padrão do navegador */
+    border: 1px solid #4a5568;
+    /* Borda */
+    border-radius: 0.375rem;
+    /* Bordas arredondadas */
+    width: 100%;
+    /* Ocupa a largura total */
+    padding: 0.5rem 0.75rem;
+    /* Preenchimento interno */
+    color: #e2e8f0;
+    /* Cor do texto */
+    line-height: 1.25;
+    /* Altura da linha */
+    outline: none;
+    /* Remove o contorno padrão ao focar */
+    background-color: #4a55684d;
+    /* Cor de fundo do input */
+}
+
+/* Estilos para o foco dos campos de entrada */
+.form-group input:focus {
+    outline: none;
+    box-shadow: 0 0 0 1.5px rgba(223, 235, 255, 0.5);
+    border-color: transparent;
+}
+
+/* Estilos para o botão de login */
+.login-button {
+    width: 100%;
+
+    background-color: #2563eb;
+
+    color: #ffffff;
+    font-weight: 700;
+
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    outline: none;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: background-color 0.3s ease-in-out;
+    border: none;
+    cursor: pointer;
+}
+
+/* Estilos para o hover do botão de login */
+.login-button:hover {
+    background-color: #1d4ed8;
+}
+
+/* Estilos para os links de suporte (esqueceu senha, criar conta) */
+.support-links {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.support-links a {
+    font-weight: 300;
+    color: #CD1F81;
+    text-decoration: none;
+
+    transition: color 0.3s;
+}
+
+.support-links a:hover {
+    color: #9c0f5f;
+}
+
+.support-links a:not(:last-child) {
+    margin-right: 1rem;
+}
+
+/* FIM DO MAIN */
+
+
+/* RESPONSIVIDADE */
+@media (max-width: 600px) {
+    header {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+
+    #container-logo img {
+        height: 48px;
+    }
+
+    #container-nav {
+        display: none;
+    }
+
+    footer {
+        padding: 16px 20px;
+    }
+
+    #footer-content p {
+        font-size: 0.85rem;
+    }
+
+    #footer-content a {
+        color: #CD1F81;
+    }
+}
