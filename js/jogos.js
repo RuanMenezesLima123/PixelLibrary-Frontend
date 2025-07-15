@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   try {
     console.log('Buscando dados do jogo para:', query);
-    const res = await fetch('/api/jogos', {
+    const res = await fetch('https://pixellibrary-backend-production.up.railway.app/api/jogos', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ query })
@@ -72,7 +72,7 @@ async function favoritarJogo() {
 
   try {
     console.log('Enviando favorito para:', email);
-    const res = await fetch('/api/favoritos', {
+    const res = await fetch('https://pixellibrary-backend-production.up.railway.app/api/favoritos', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -123,7 +123,7 @@ async function carregarAvaliacoes(jogoId) {
   
   try {
     console.log(`Buscando avaliações para jogo ID: ${jogoId}`);
-    const res = await fetch(`/api/avaliacoes/${jogoId}`);
+    const res = await fetch(`https://pixellibrary-backend-production.up.railway.app/api/avaliacoes/${jogoId}`);
     
     if (!res.ok) {
       throw new Error(`Erro HTTP: ${res.status}`);
@@ -216,7 +216,7 @@ document.getElementById('btn-enviar-avaliacao')?.addEventListener('click', async
 
   try {
     console.log('Enviando avaliação:', { jogoId: window.jogo.id, nota, texto });
-    const res = await fetch('/api/avaliacoes', {
+    const res = await fetch('https://pixellibrary-backend-production.up.railway.app/api/avaliacoes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
