@@ -6,7 +6,7 @@
     }
 
     try {
-      const res = await fetch('/api/favoritos?email=' + encodeURIComponent(email));
+      const res = await fetch('https://pixellibrary-backend-production.up.railway.app/api/favoritos?email=' + encodeURIComponent(email));
       const jogos = await res.json();
 
       const gameGrid = document.querySelector('.game-grid');
