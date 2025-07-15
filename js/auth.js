@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const rota = isLogin ? 'login' : 'register';
     try {
-      const res = await fetch(`/api/auth/${rota}`, {
+      const res = await fetch(`https://pixellibrary-backend-production.up.railway.app/api/auth/${rota}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
