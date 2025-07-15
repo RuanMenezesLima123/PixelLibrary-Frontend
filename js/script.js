@@ -4,6 +4,9 @@ const PLACEHOLDER_IMAGE = 'assets/placeholder.jpg';
 
 // ========= PESQUISA E FILTROS =========
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('Iniciando carregamento de seções...');
+  console.log('Conectando à API:', API_BASE_URL);
+
   // Configura busca
   const form = document.querySelector('#form-busca');
   if (form) {
@@ -42,16 +45,39 @@ async function carregarSecoes() {
 
 // ========= FUNÇÕES DE CARREGAMENTO =========
 async function carregarDados(rota) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 segundos
+
   try {
-    const response = await fetch(`${API_BASE_URL}${rota}`);
-    if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
+    const response = await fetch(`${API_BASE_URL}${rota}`, {
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
+    
+    if (!response.ok) {
+      const errorData = await response.text();
+      throw new Error(`Erro HTTP ${response.status}: ${errorData}`);
+    }
     
     const data = await response.json();
-    if (!Array.isArray(data)) throw new Error('Dados não são um array');
+    
+    if (!data || (typeof data !== 'object')) {
+      throw new Error('Resposta inválida: não é um objeto');
+    }
+    
+    if (!Array.isArray(data) && Array.isArray(data.results)) {
+      return data.results;
+    }
+    
+    if (!Array.isArray(data)) {
+      throw new Error('Formato de dados inesperado');
+    }
     
     return data;
   } catch (error) {
-    console.error(`Erro ao carregar ${rota}:`, error);
+    clearTimeout(timeoutId);
+    console.error(`Erro detalhado ao carregar ${rota}:`, error);
     return null;
   }
 }
@@ -59,7 +85,13 @@ async function carregarDados(rota) {
 function exibirErro(seletor, mensagem) {
   const container = document.querySelector(seletor);
   if (container) {
-    container.innerHTML = `<p class="erro">${mensagem}</p>`;
+    container.innerHTML = `
+      <div class="erro-container">
+        <p>${mensagem}</p>
+        <button class="reload-btn">Tentar novamente</button>
+      </div>
+    `;
+    container.querySelector('.reload-btn').addEventListener('click', carregarSecoes);
   }
 }
 
@@ -81,22 +113,27 @@ async function carregarNovidades() {
   const container = document.querySelector('#novidades .grid-jogos');
   if (!container) return;
 
-  const dados = await carregarDados('/novidades');
-  
-  if (!dados) {
-    exibirErro('#novidades .grid-jogos', 'Problemas ao carregar novidades. Tente novamente mais tarde.');
-    return;
-  }
+  try {
+    const dados = await carregarDados('/novidades');
+    
+    if (!dados) {
+      exibirErro('#novidades .grid-jogos', 'Problemas ao carregar novidades. Tente novamente mais tarde.');
+      return;
+    }
 
-  container.innerHTML = dados.map(jogo => {
-    const dataLancamento = jogo.first_release_date ? 
-      new Date(jogo.first_release_date * 1000).toLocaleDateString() : 'Em breve';
-      
-    return `
-      ${criarCardJogo(jogo)}
-      <span class="data-lancamento">${dataLancamento}</span>
-    `;
-  }).join('');
+    container.innerHTML = dados.map(jogo => {
+      const dataLancamento = jogo.first_release_date ? 
+        new Date(jogo.first_release_date * 1000).toLocaleDateString() : 'Em breve';
+        
+      return `
+        ${criarCardJogo(jogo)}
+        <span class="data-lancamento">${dataLancamento}</span>
+      `;
+    }).join('');
+  } catch (error) {
+    console.error('Erro ao carregar novidades:', error);
+    exibirErro('#novidades .grid-jogos', 'Erro ao carregar novidades. Servidor pode estar offline.');
+  }
 }
 
 // ========= RECOMENDAÇÕES =========
@@ -104,14 +141,23 @@ async function carregarRecomendacoes() {
   const container = document.querySelector('.recomendacoes');
   if (!container) return;
 
-  const dados = await carregarDados('/jogos/recomendacoes');
-  
-  if (!dados) {
-    exibirErro('.recomendacoes', 'Problemas ao carregar recomendações. Tente novamente mais tarde.');
-    return;
-  }
+  try {
+    const dados = await carregarDados('/jogos/recomendacoes');
+    
+    if (!dados) {
+      exibirErro('.recomendacoes', 'Problemas ao carregar recomendações. Tente novamente mais tarde.');
+      return;
+    }
 
-  container.innerHTML = dados.map(criarCardJogo).join('');
+    if (!Array.isArray(dados)) {
+      throw new Error('Dados de recomendações não são um array');
+    }
+
+    container.innerHTML = dados.map(criarCardJogo).join('');
+  } catch (error) {
+    console.error('Erro ao carregar recomendações:', error);
+    exibirErro('.recomendacoes', 'Erro ao carregar recomendações. Servidor pode estar offline.');
+  }
 }
 
 // ========= PROBLEMAS CONSOLE =========
@@ -119,21 +165,30 @@ async function carregarProblemasConsole() {
   const container = document.querySelector('#console-problems .grid-jogos');
   if (!container) return;
 
-  const dados = await carregarDados('/jogos/recomendacoes');
-  
-  if (!dados) {
-    exibirErro('#console-problems .grid-jogos', 'Não foi possível verificar problemas no console.');
-    return;
-  }
+  try {
+    const dados = await carregarDados('/jogos/problemas');
+    
+    if (!dados) {
+      // Fallback: use recomendações se o endpoint principal falhar
+      const fallbackData = await carregarDados('/jogos/recomendacoes');
+      const jogosProblema = Array.isArray(fallbackData) ? 
+        fallbackData.slice(0, 4).map(jogo => ({ ...jogo, rating: 65 })) : [];
+      
+      container.innerHTML = jogosProblema.map(jogo => `
+        ${criarCardJogo(jogo)}
+        <span class="warning">⚠️ Problemas reportados</span>
+      `).join('');
+      return;
+    }
 
-  // Simulação de jogos com problemas (apenas para demonstração)
-  const jogosProblema = Array.isArray(dados) ? 
-    dados.slice(0, 4).map(jogo => ({ ...jogo, rating: 65 })) : [];
-  
-  container.innerHTML = jogosProblema.map(jogo => `
-    ${criarCardJogo(jogo)}
-    <span class="warning">⚠️ Problemas reportados</span>
-  `).join('');
+    container.innerHTML = dados.map(jogo => `
+      ${criarCardJogo(jogo)}
+      <span class="warning">⚠️ ${jogo.problema || 'Problemas reportados'}</span>
+    `).join('');
+  } catch (error) {
+    console.error('Erro ao carregar problemas:', error);
+    exibirErro('#console-problems .grid-jogos', 'Não foi possível verificar problemas no console.');
+  }
 }
 
 // ========= CLIQUE NOS JOGOS =========
